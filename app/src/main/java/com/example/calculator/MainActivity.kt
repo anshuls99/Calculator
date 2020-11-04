@@ -7,6 +7,12 @@ import android.widget.Button
 import kotlinx.android.synthetic.main.activity_main.*
 
 class MainActivity : AppCompatActivity() {
+
+    var isNewOp = true
+    private var op: String? = null
+    var oldNumber = ""
+    var buValue: String? = null
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -14,11 +20,16 @@ class MainActivity : AppCompatActivity() {
 
     fun buNumberEvent(view: View) {
 
+        if (isNewOp)
+            showNumber.text = ""
+
+        isNewOp = false
+
         val buSelected = view as Button
 
-        var buValue: String = showNumber.text.toString()
+        buValue= showNumber.text.toString()
 
-        if (buValue == "0" && buValue.length == 1)
+        if (buValue == "0" && buValue!!.length == 1)
             buValue = ""
 
 
@@ -34,15 +45,58 @@ class MainActivity : AppCompatActivity() {
             bu8.id -> buValue += "8"
             bu9.id -> buValue += "9"
             buDot.id -> buValue += "."
-            buEqual.id -> buValue += "="
-            buPlus.id -> buValue += "+"
-            buMinus.id -> buValue += "-"
-            buMultiply.id -> buValue += "*"
-            buDivide.id -> buValue += "/"
             buAC.id -> buValue = "0"
             else -> buValue += "NA"
         }
 
+
         showNumber.text = buValue
+
     }
+
+    fun buOpEvent(view: View) {
+
+        val buSelected = view as Button
+
+        when (buSelected.id) {
+            buPlus.id -> {
+                buValue += "+"
+                op = "+"
+            }
+            buMinus.id -> {
+                buValue += "-"
+                op = "-"
+            }
+            buMultiply.id -> {
+                buValue += "*"
+                op = "*"
+            }
+            buDivide.id -> {
+                buValue += "/"
+                op = "/"
+            }
+        }
+
+        oldNumber = showNumber.text.toString()
+        showNumber.text = buValue
+        isNewOp = true
+    }
+
+    fun buEqualEvent(view: View) {
+
+        val newNumber = showNumber.text.toString()
+        val finalNumber = when (op) {
+
+            "+" -> oldNumber.toDouble() + newNumber.toDouble()
+            "-" -> oldNumber.toDouble() - newNumber.toDouble()
+            "*" -> oldNumber.toDouble() * newNumber.toDouble()
+            else -> oldNumber.toDouble() / newNumber.toDouble()
+        }
+
+        buValue = finalNumber.toString()
+        showNumber.text = buValue
+        isNewOp = true
+    }
+
+
 }
